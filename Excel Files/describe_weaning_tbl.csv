@@ -1,0 +1,7 @@
+Field,Type,Null,Key,Default,Extra
+chaps_id,bigint(20),NO,PRI,NULL,
+entry_date,date,NO,PRI,NULL,
+manage_code,varchar(2),YES,,NULL,
+contemp_grp,varchar(2),YES,,NULL,
+muscle_grade,varchar(2),YES,,NULL,
+lot_no,varchar(2),YES,,NULL,

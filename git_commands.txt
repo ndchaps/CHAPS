@@ -1,0 +1,74 @@
+
+$ git config --global user.name "chapsndsu"
+
+
+$ git config --global user.email "chapsndsu@gmail.com"
+
+$ git status
+
+$ git add .
+
+$ git commit -m "initial commit after adding initial material in CHAPS"
+
+-----SSH key generation-----------------
+$ ssh-keygen -t rsa -C "chapsndsu@gmail.com"
+ phrase :chaps2016
+ # the ssh key will me generated in users/ddawar/ssh folder
+ # copy the rsa.pub key and go to github
+ #go to settings in the github account and slect ssh and add new key
+ # add description and paste the key
+ # to check if the key is working go to git bash and type
+ $ ssh -T git@github.com
+ #enter the pass phrase
+<----pushing the content to remote repository-->
+$git remote add chaps_origin https://bitbucket.org/chapsndsu/ndsu_chaps_2016
+$ git push -u chaps_origin master --all
+
+#IT ASKS FOR THE USERNAME AND PASSWORD TOT HE WEBSITE:
+Username: chapsndsu
+password:chaps2016
+
+#AND ALSO FOR THE PASSPHRASE KEY
+passphrase key:chaps2016
+
+#TO LIST THE ORIGINGS
+$git remote -v
+<----------retriving previous versions on a branch----------->
+# there is a config file in the root of git rep.. First set the "hist" variable in the config file as follows:
+#open the cofig file and copy and paste the folowing contents. The alias hist will be useful here.
+git config --global alias.co checkout
+git config --global alias.ci commit
+git config --global alias.st status
+git config --global alias.br branch
+git config --global alias.hist 'log --pretty=format:"%h %ad | %s%d [%an]" --graph --date=short'
+git config --global alias.type 'cat-file -t'
+git config --global alias.dump 'cat-file -p
+
+
+#now type the folowing command
+$ git hist
+
+#this command will give you the hash corresponding to each commit, the time and the message.
+#now to retrive ay version copy the corresponding hash and type the following command
+$ git checkout <hash> #whatever the hash value is
+$ cat file_name #you have to specify the name of the file for which you want to see a previous version
+
+
+# if you just want to retrive the latest version in the master branch, you dont need the hash just type the fillowing commands:
+$git checkout master
+$cat hello.html
+
+#if you want to retrive a varsion without using hist concet, then go to the log file in .git folder and open it and copy the hash key for any version and 
+#type the following:
+$ git checkout <hash> #whatever the hash value is
+$ cat file_name #you have to specify the name of the file for which you want to see a p
+previous version
+
+------------Creating a fork and syncing -----------------------
+
+https://confluence.atlassian.com/bitbucket/forking-a-repository-221449527.html
+
+---------------Creating a branch-----------------------
+
+
+

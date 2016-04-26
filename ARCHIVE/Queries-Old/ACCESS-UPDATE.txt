@@ -1,0 +1,29 @@
+UPDATE cowprof INNER JOIN calfbirth ON cowprof.calfid = calfbirth.CalfID SET cowprof.chaps_id = [calfbirth].[chaps_id]
+WHERE (([cowprof].[calfid]=[calfbirth].[CalfID]));
+
+
+SELECT  one.calfid, one.breed 
+FROM C:\Users\ddawar\Documents\CHAPS\Access\1.accdb.calfbirth one , C:\Users\ddawar\Documents\CHAPS\Access\2.accdb.calfbirth two
+WHERE one.calfid <> two.calfid 
+
+AND one.birthdate = two.birthdate
+AND one.sireid=two.sireid
+AND one.cowid =two.cowid;
+
+SELECT one.calfid, one.birthdate, one.breed, one.sireid, one.cowid, one.registration, one.elecid, one.regname, one.birthwt, one.sex, one.calvingease
+FROM C:\Users\ddawar\Documents\CHAPS\Access\1.accdb.calfbirth one
+UNION
+SELECT two.calfid, two.birthdate, two.breed, two.sireid, two.cowid, two.registration, two.elecid, two.regname, two.birthwt, two.sex, two.calvingease 
+FROM C:\Users\ddawar\Documents\CHAPS\Access\2.accdb.calfbirth two
+
+//Unique calves
+Select one.chaps_id,one.birthdate,one.sireid, one.cowid, one.registration, one.elecid, one.regname, one.sex, one.breed, one.birthwt, one.calvingease
+from C:\Users\ddawar\Documents\CHAPS\Access\1.accdb.cowprof one
+UNION ALL SELECT two.chaps_id, two.birthdate, two.sireid, two.cowid, two.registration, two.elecid, two.regname, two.sex, two.breed, two.birthwt, two.calvingease
+FROM  C:\Users\ddawar\Documents\CHAPS\Access\2.accdb.cowprof two where two.chaps_id NOT IN ( SELECT chaps_id from C:\Users\ddawar\Documents\CHAPS\Access\1.accdb.cowprof);
+
+//unique cows
+Select one.chaps_id, one.birthdate,one.sire,one.dam,one.regnum, one.elecid, one.regname,one.breed,one.herdid
+from C:\Users\ddawar\Documents\CHAPS\Access\1.accdb.cowprof one 
+UNION ALL SELECT two.chaps_id, two.birthdate,two.sire,two.dam,two.regnum, two.elecid, two.regname,two.breed,two.herdid
+FROM  C:\Users\ddawar\Documents\CHAPS\Access\2.accdb.cowprof two where two.chaps_id NOT IN ( SELECT chaps_id from C:\Users\ddawar\Documents\CHAPS\Access\1.accdb.cowprof);

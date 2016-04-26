@@ -1,0 +1,9 @@
+DROP TABLE cowprof_1;
+
+DROP TABLE sireprof_1;
+
+ALTER TABLE calfbirth DROP COLUMN Chaps_ID;
+
+ALTER TABLE calfwean DROP COLUMN Chaps_ID;
+
+ALTER TABLE cowbrd DROP COLUMN Chaps_ID;

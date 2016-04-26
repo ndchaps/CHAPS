@@ -1,0 +1,14 @@
+CALL Sex_Based_Calf_List(2,'2014-01-01','2014-12-31');
+CALL Sex_Based_Group_Averages(3,'2014-01-01','2014-12-31');
+CALL Sex_Based_Cow_Breed_Averages(2,'2014-01-01','2014-12-31');
+CALL Sex_Based_Sire_Averages(2,'2014-01-01','2014-12-31');
+Call Sire_Summary('2012-01-01','2012-12-31');
+CALL Summary_Of_Cows_Present_In_Herd('2014-1-1','2014-12-31','2013-08-01');
+CALL Herd_Summary_Calving_Distribution_Table('2014-1-1','2014-12-31','2013-08-01');
+Call Sex_Based_Calves_Born_Weighed_Unweighed_Count('2012-1-1','2012-12-31');
+call Herd_Summary_Averages('2014-01-01','2014-12-31');
+CALL Summary_Of_Cows_Leaving('2014-1-1','2014-12-31','2013-08-01');
+call Herd_Comparison('2013-1-1','2013-12-31','2012-08-01');
+CALL SPA_Summary_Reprodcution_Performance('2014-1-1','2014-12-31','2013-8-1');
+Call SPA_Summary_Calving_Distribution('2014-1-1','2014-12-31','2013-08-01');
+CALL SPA_Summary_Production_Performance_Measures('2014-1-1','2014-12-31','2013-8-1');

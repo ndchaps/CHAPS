@@ -1,0 +1,2 @@
+delete from cattle_info_tbl where chaps_id=0;
+

@@ -1,0 +1,74 @@
+INSERT INTO producer_tbl (producer_id, name, address1, address2, county, city, district, state, region, zip, country, tel)
+VALUES(0, 'Joseph L', 'CS', 'NDSU', 'CASS', 'FARGO', '', 'ND', 'COLDEST', '58102', 'USA', '7015412222');
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\location.csv' INTO TABLE location_tbl FIELDS TERMINATED BY ',';
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\herd.csv' INTO TABLE herd_tbl FIELDS TERMINATED BY ',';
+
+INSERT INTO herd_asso_tbl (herd_id,producer_id, entry_date, exit_date, location_id)
+VALUES('H38',0,'2008-01-01 00:00:01','','1');
+
+INSERT INTO BULL_TURNOUT_TBL(herd_id,producer_id,date) VALUES ('H38',0,'2007-6-18 00:00:00');
+INSERT INTO BULL_TURNOUT_TBL(herd_id,producer_id,date) VALUES ('H38',0,'2006-6-16 00:00:00');
+INSERT INTO BULL_TURNOUT_TBL(herd_id,producer_id,date) VALUES ('H38',0,'2008-6-10 00:00:00');
+INSERT INTO BULL_TURNOUT_TBL(herd_id,producer_id,date) VALUES ('H38',0,'2009-6-18 00:00:00');
+INSERT INTO BULL_TURNOUT_TBL(herd_id,producer_id,date) VALUES ('H38',0,'2010-6-1 00:00:00');
+INSERT INTO BULL_TURNOUT_TBL(herd_id,producer_id,date) VALUES ('H38',0,'2011-8-8 00:00:00');
+INSERT INTO BULL_TURNOUT_TBL(herd_id,producer_id,date) VALUES ('H38',0,'2012-8-1 00:00:00');
+INSERT INTO BULL_TURNOUT_TBL(herd_id,producer_id,date) VALUES ('H38',0,'2013-8-1 00:00:00');
+
+
+//Before this import, change the date type in excel to one compatible with time stamp
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\Calves.csv' INTO TABLE cattle_info_tbl FIELDS TERMINATED BY ',';
+delete from cattle_info_tbl where chaps_id=0;
+
+UPDATE cattle_info_tbl set cattle_info_tbl.herd_id = REPLACE(herd_id,char(13),'');
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\Cows.csv' INTO TABLE cattle_info_tbl FIELDS TERMINATED BY ',';
+delete from cattle_info_tbl where chaps_id=0;
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\Unique-Sires-Across-Herds.csv' INTO TABLE cattle_info_tbl FIELDS TERMINATED BY ',';
+delete from cattle_info_tbl where chaps_id=0;
+
+
+UPDATE cattle_info_tbl set cattle_info_tbl.herd_id = REPLACE(herd_id,char(13),'');
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\dummy_dates.csv' INTO TABLE DUMMY_DATE_TBL FIELDS TERMINATED BY ',';
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\dummy_dates1.csv' INTO TABLE DUMMY_DATE_TBL FIELDS TERMINATED BY ',';
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\dummy_dates2.csv' INTO TABLE DUMMY_DATE_TBL FIELDS TERMINATED BY ',';
+
+UPDATE cattle_info_tbl c, dummy_date_tbl d SET c.birth_date = d.date where c.chaps_id = d.chaps_id;
+
+INSERT INTO owners_tbl (chaps_id,start_date,herd_id) SELECT chaps_id,birth_date,herd_id FROM cattle_info_tbl, herd_asso_tbl where cattle_info_tbl.herd_id =  herd_asso_tbl.herd_id; 
+
+UPDATE owners_tbl set owners_tbl.herd_id = REPLACE(herd_id,char(13),'');
+
+UPDATE owners_tbl o, HERD_ASSO_TBL h set o.producer_id=h.producer_id where o.HERD_ID=h.HERD_ID;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------------No USE---------------------------------------------------------------------
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\chaps_id.csv' INTO TABLE chaps_id_tbl FIELDS TERMINATED BY ',';
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\Cows_Entered_Herd_Record.csv' INTO TABLE ENTERD_HERD_TBL FIELDS TERMINATED BY ',';
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\Sires_Entered_Herd_Record.csv' INTO TABLE ENTERD_HERD_TBL FIELDS TERMINATED BY ',';
+
+UPDATE owners_tbl o, ENTERD_HERD_TBL e set o.herd_id=e.herd_id where o.chaps_id=e.chaps_id;

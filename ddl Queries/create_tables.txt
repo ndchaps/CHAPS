@@ -1,0 +1,228 @@
+create table PRODUCER_TBL(
+	producer_id 	INT NOT NULL,
+	name		VARCHAR(50),
+	address1	VARCHAR(50),
+	address2	VARCHAR(50),
+	county		VARCHAR(30),
+	city		VARCHAR(30),
+	district	VARCHAR(30),
+	state		VARCHAR(30),
+	region		VARCHAR(30),
+	zip		VARCHAR(20),
+	country		VARCHAR(30),
+	tel		VARCHAR(30),
+	PRIMARY KEY(producer_id)
+);
+
+create table LOCATION_TBL(
+	location_id	VARCHAR(30) NOT NULL,
+	producer_id 	INT NOT NULL,
+	name		VARCHAR(50),
+	address1	VARCHAR(50),
+	address2	VARCHAR(50),
+	county		VARCHAR(30),
+	city		VARCHAR(30),
+	district	VARCHAR(30),
+	state		VARCHAR(30),
+	region		VARCHAR(30),
+	zip		VARCHAR(20),
+	country		VARCHAR(30),
+	location_name	VARCHAR(30),
+	tel		VARCHAR(30),
+	PRIMARY KEY (location_id,producer_id),
+	FOREIGN KEY (producer_id) REFERENCES PRODUCER_TBL(producer_id)
+);
+
+create table HERD_TBL(
+	herd_id		VARCHAR(30) NOT NULL,
+	producer_id	INT	NOT NULL,
+	herd_name	VARCHAR(30),
+	herd_desc	TEXT,
+	PRIMARY KEY (herd_id,producer_id),
+	FOREIGN KEY (producer_id) REFERENCES PRODUCER_TBL (producer_id)
+);
+
+create table HERD_ASSO_TBL(
+	herd_id		VARCHAR(30) NOT NULL,
+	producer_id	INT	NOT NULL,
+	entry_date	TIMESTAMP	NOT NULL,
+	exit_date	TIMESTAMP,
+	location_id	VARCHAR(30),
+	PRIMARY KEY (herd_id,producer_id,entry_date),
+	FOREIGN KEY (producer_id) REFERENCES PRODUCER_TBL (producer_id),
+	FOREIGN KEY (herd_id) REFERENCES HERD_TBL (herd_id),
+	FOREIGN KEY (location_id) REFERENCES LOCATION_TBL (location_id)
+);
+
+create table CATTLE_INFO_TBL(
+	chaps_id	BIGINT NOT NULL,
+	birth_date 	TIMESTAMP,
+	sire_id		BIGINT,
+	dam_id		BIGINT,
+	reg_no		VARCHAR(30),
+	elec_id		VARCHAR(30),
+	reg_name	VARCHAR(30),
+	sex		VARCHAR(1),
+	breed		VARCHAR(16),
+	birth_weight	FLOAT,
+	calving_ease	TINYINT,
+	state		VARCHAR(2),
+	PRIMARY KEY (chaps_id)
+);
+create table OWNERS_TBL(
+	chaps_id	BIGINT 	NOT NULL,
+	start_date	TIMESTAMP NOT NULL,
+	exit_date	TIMESTAMP,
+	herd_id		VARCHAR(30),
+	producer_id	INT,
+	entry_code	VARCHAR(2),
+	exit_code	VARCHAR(2),
+	PRIMARY KEY (chaps_id,start_date),
+	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id),
+	FOREIGN KEY (producer_id) REFERENCES HERD_ASSO_TBL (producer_id),
+	FOREIGN KEY (herd_id) REFERENCES HERD_ASSO_TBL (herd_id)
+);
+
+
+
+create table EPD_TBL(
+	chaps_id	BIGINT NOT NULL,
+	entry_date 	TIMESTAMP,
+	birth_weight	FLOAT,
+	wean_weight	FLOAT,
+	yearling_weight	FLOAT,
+	total_maternal	FLOAT,
+	maternal_milk	FLOAT,
+	birth_wt_arcy	FLOAT,
+	wean_wt_arcy	FLOAT,
+	yearling_wt_arcy	FLOAT,
+	total_mt_arcy		FLOAT,
+	maternal_ml_arcy	FLOAT,
+	PRIMARY KEY (chaps_id,entry_date),
+	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id)	
+);
+
+create table CARCASS_TBL(
+	chaps_id	BIGINT NOT NULL,
+	carcass_date 	TIMESTAMP,
+	status		VARCHAR(2),
+	yield_grade	FLOAT,
+	hot_carcass_wt	FLOAT,
+	fat_thickness	TINYINT,
+	kidney_kph	TINYINT,
+	rib_eye		TINYINT,
+	quality_grade	VARCHAR(12),
+	marbling_score	INT,
+	color		VARCHAR(10),
+	texture_of_lean	VARCHAR(10),
+	maturity	VARCHAR(10),
+	conformance	VARCHAR(1),
+	muscle_score	FLOAT,
+	carcass_notes	TEXT,
+	PRIMARY KEY (chaps_id),
+	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id)	
+);
+
+create table MEASUREMENT_TBL(
+	chaps_id	BIGINT NOT NULL,
+	entry_date	DATETIME NOT NULL,
+	weight		FLOAT,
+	hip_height	FLOAT,
+	frame_score	FLOAT,
+	status		VARCHAR(2),
+	PRIMARY KEY (chaps_id,entry_date),
+	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id)	
+);
+
+create table WEANING_TBL(
+	chaps_id	BIGINT NOT NULL,
+	entry_date	DATETIME NOT NULL,
+	manage_code	VARCHAR(2),
+	contemp_grp	VARCHAR(2),
+	muscle_grade	VARCHAR(2),
+	lot_no		VARCHAR(2),
+	PRIMARY KEY (chaps_id,entry_date),
+	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id)	
+);
+
+create table BACKGROUND_TBL(
+	chaps_id	BIGINT NOT NULL,
+	entry_date	DATETIME NOT NULL,
+	PRIMARY KEY (chaps_id,entry_date),
+	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id)	
+);
+
+create table REPLACEMENT_TBL(
+	chaps_id	BIGINT NOT NULL,
+	entry_date	DATETIME NOT NULL,
+	back_fat	FLOAT,
+	rib_eye		FLOAT,
+	marbling	FLOAT,
+	365_day_weight	FLOAT,
+	scrotum_circm	FLOAT,
+	pelvic_area	FLOAT,
+	con		TINYINT,
+	PRIMARY KEY (chaps_id,entry_date),
+	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id)	
+);
+
+create table FEEDLOT_TBL(
+	chaps_id	BIGINT NOT NULL,
+	entry_date	DATETIME NOT NULL,
+	con		TINYINT,
+	back_fat	FLOAT,
+	rib_eye		FLOAT,
+	marbling	FLOAT,
+	PRIMARY KEY (chaps_id,entry_date),
+	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id)	
+);
+
+create table ULTRASOUND_TBL(
+	chaps_id	BIGINT NOT NULL,
+	entry_date	DATETIME NOT NULL,
+	crown_width	FLOAT,
+	body_length	FLOAT,
+	estimated_age	TINYINT,
+	sex_of_calf	VARCHAR(1),
+	PRIMARY KEY (chaps_id,entry_date),
+	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id)	
+);
+
+create table BREED_ATTEMPT_TBL(
+	chaps_id	BIGINT NOT NULL,
+	entry_date	DATETIME NOT NULL,
+	sire_id		BIGINT,
+	concep_status	VARCHAR(2),
+	PRIMARY KEY (chaps_id,entry_date),
+	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id)	
+);
+
+
+create table DAM_COND_TBL(
+	chaps_id	BIGINT NOT NULL,
+	entry_date	DATE NOT NULL,
+	weight		FLOAT,
+	con		TINYINT,
+	back_fat	FLOAT,
+	stage		VARCHAR(2),
+	PRIMARY KEY (chaps_id,entry_date),
+	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id)	
+);
+
+create table NOTES_TBL(
+	chaps_id	BIGINT NOT NULL,
+	entry_date	DATETIME NOT NULL,
+	note_type	VARCHAR(2),
+	notes		TEXT,
+	PRIMARY KEY (chaps_id,entry_date),
+	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id)	
+);
+
+create table BULL_TURNOUT_TBL(
+	herd_id		VARCHAR(30) 	NOT NULL,
+	producer_id	INT 		NOT NULL,
+	date		DATETIME 	NOT NULL,
+	PRIMARY KEY (herd_id,producer_id,date),
+	FOREIGN KEY (herd_id) REFERENCES HERD_TBL (herd_id),
+	FOREIGN KEY (producer_id) REFERENCES HERD_TBL (producer_id)
+);

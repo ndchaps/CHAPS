@@ -1,0 +1,41 @@
+drop table BULL_TURNOUT_TBL;
+
+drop table NOTES_TBL;
+
+drop table DAM_COND_TBL;
+
+drop table MEASUREMENT_TBL;
+
+drop table BREED_ATTEMPT_TBL;
+
+drop table ULTRASOUND_TBL;
+
+drop table FEEDLOT_TBL;
+
+drop table REPLACEMENT_TBL;
+
+drop table BACKGROUND_TBL;
+
+drop table WEANING_TBL;
+
+drop table CARCASS_TBL;
+
+drop table EPD_TBL;
+
+drop table OWNERS_TBL;
+
+drop table HERD_ASSO_TBL;
+
+drop table HERD_TBL;
+
+drop table LOCATION_TBL;
+
+drop table PRODUCER_TBL;
+
+drop table CATTLE_INFO_TBL;
+
+drop table CHAPS_ID_TBL;
+
+drop table ENTERD_HERD_TBL;
+
+

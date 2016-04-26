@@ -1,0 +1,25 @@
+create table CATTLE_NAMES_TBL(
+	chaps_id	BIGINT NOT NULL,	
+	cattle_name	VARCHAR(16),
+	entry_date	DATE,	
+	PRIMARY KEY (chaps_id,cattle_name),
+	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id)
+);
+
+create table COW_BREEDING_TBL(
+	cow_id	BIGINT NOT NULL,
+	bull_turnout_date DATE NOT NULL,
+	conception_date	DATE,
+	breeding_date	DATE,	
+	breeding_weight	FLOAT,
+	breeding_condition_score	FLOAT,
+	wean_date	DATE,
+	wean_weight	FLOAT,
+	wean_condition_score	FLOAT,
+	PRIMARY KEY (cow_id,bull_turnout_date)
+);
+
+======================================
+ACCESS QUERY
+======================================
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\Cow-Breeding.csv' INTO TABLE COW_BREEDING_TBL FIELDS TERMINATED BY ',';

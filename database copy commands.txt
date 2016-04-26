@@ -1,0 +1,19 @@
+=======================================
+Create a copy of existing database
+=======================================
+Old DB = chaps1
+New DB= chaps1_copy.sql
+Follow the following steps
+•	Go to command line
+•	Go to C:\wamp\bin\mysql\mysql5.6.17\bin
+•	Mysqldump  –u  root –p  chaps1 > --routines> chaps1_copy.sql 
+•	mysql  –u  root
+•	create database chaps1_copy
+•	use chaps1_copy
+•	source chaps1.sql
+
+------------copy only procedures----------------------
+mysqldump -u root -p chaps1 --no-data > 1.sql 
+
+mysql -u root -p chaps1_test < 1.sql
+

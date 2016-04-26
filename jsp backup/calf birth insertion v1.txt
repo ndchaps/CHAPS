@@ -1,0 +1,105 @@
+<%@ page language="java"   contentType="application/json; charset=ISO-8859-1"  pageEncoding="ISO-8859-1"%>
+<%@ page  import="java.io.*,java.util.*,java.util.Date.*,java.text.*,java.sql.*,org.json.JSONArray,org.json.JSONObject,org.json.JSONException"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<%
+	int successCount=0,notAavailable=0,failCount=0;
+	response.setContentType("text/html");
+	out.println("test");
+	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");  
+	BufferedReader r = request.getReader();  
+	//keep a flag that is true as long as the BufferedReader still has data
+	String myInputField = r.readLine();
+	//String myInputField="[{\"birth_date\":\"1990-03-06\",\"breed\":\"AN\",\"reg_no\":\"dummy\",\"reg_name\":\"\",\"elec_id\":\"\",\"sire_id\":20177,\"dam_id\":0,\"sex\":\"2\",\"birth_weight\":53,\"calving_ease\":1,\"state\":\"\",\"herd_id\":\"H38\",\"cow_age\":2,\"birth_notes\":\"first birth notes\"},{\"birth_date\":\"1990-03-06\",\"breed\":\"AN\",\"reg_no\":\"dummy\",\"reg_name\":\"\",\"elec_id\":\"\",\"sire_id\":20177,\"dam_id\":0,\"sex\":\"2\",\"birth_weight\":53,\"calving_ease\":1,\"state\":\"\",\"herd_id\":\"H38\",\"cow_age\":2,\"birth_notes\":\"second birth notes\"}]";
+	if(myInputField==null)
+	{
+	   System.out.println("the string is null");
+	}
+	else{
+	 out.println("the string is not null"); 
+	}
+  	JSONArray JsonRowSet=null;
+    if(myInputField != null) {
+      out.println("Inside if block");
+      JsonRowSet = new JSONArray(myInputField);  
+      if (JsonRowSet!=null)
+      {
+      	 System.out.println("Json array formed");
+      }
+      System.out.println(JsonRowSet.toString());
+    }
+    for (int i = 0; i < JsonRowSet.length(); i++) {
+		JSONObject jObj = JsonRowSet.getJSONObject(i);  
+		System.out.println(i + " birth_date : " + jObj.getString("birth_date"));     
+		System.out.println(i + " breed : " + jObj.getString("breed"));
+		System.out.println(i + " reg_no : " + jObj.getString("reg_no"));
+		System.out.println(i + " reg_name : " + jObj.getString("reg_name"));
+		System.out.println(i + " elec_id : " + jObj.getString("elec_id"));
+		System.out.println(i + " sire_id : " + jObj.getInt("sire_id"));
+		System.out.println(i + " dam_id : " + jObj.getInt("dam_id"));   
+		System.out.println(i + " sex : " + jObj.getString("sex"));
+		System.out.println(i + " birth_weight : " + jObj.getDouble("birth_weight"));
+		System.out.println(i + " calving_ease : " + jObj.getInt("calving_ease"));
+		System.out.println(i + " herd_id : " + jObj.getString("herd_id"));
+		System.out.println(i + " cow_age : " + jObj.getInt("cow_age"));
+		System.out.println(i + " birth_notes : " + jObj.getString("birth_notes"));  
+    }
+    
+    String driver = "com.mysql.jdbc.Driver";
+  	String url = "jdbc:mysql://localhost/chaps1_temporary?allowMultiQueries=true";
+  	String username = "root";
+  	String password = "chaps";
+  	Class.forName(driver);
+  	Connection connection = DriverManager.getConnection(url, username, password);
+  	String sql = "call Insert_CalfBirthInfo_byPK(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    PreparedStatement pstmt = connection.prepareStatement(sql);
+    try { 
+	    for (int i = 0; i < JsonRowSet.length(); i++) {
+	    	JSONObject jObj = JsonRowSet.getJSONObject(i);
+	    	java.util.Date birth_date = format.parse(jObj.getString("birth_date"));
+	    	pstmt.setDate(1, new java.sql.Date(birth_date.getTime()));
+	        pstmt.setString(2, jObj.getString("breed"));
+	        pstmt.setString(3, jObj.getString("reg_no"));
+	        pstmt.setString(4,  jObj.getString("reg_name"));
+	        pstmt.setString(5,jObj.getString("elec_id"));
+	        pstmt.setInt(6, Integer.parseInt(jObj.getString("sire_id")));
+	        pstmt.setInt(7,Integer.parseInt(jObj.getString("dam_id")));
+	        pstmt.setString(8, jObj.getString("sex"));
+	        pstmt.setString(9, "0000-01-01");
+	        pstmt.setDouble(10,Double.parseDouble(jObj.getString("birth_weight")));
+	        pstmt.setInt(11, Integer.parseInt(jObj.getString("calving_ease")));
+	        pstmt.setString(12,jObj.getString("herd_id"));
+	        pstmt.setInt(13,Integer.parseInt(jObj.getString("cow_age")));
+	        pstmt.setString(14,jObj.getString("birth_notes")); 
+	        pstmt.executeUpdate();
+	    }
+	        	
+    }
+    catch (BatchUpdateException buex) {
+      buex.printStackTrace();
+      //LogUtil.error(buex);
+      int[] updateCounts = buex.getUpdateCounts();
+      for (int i = 0; i < updateCounts.length; i++) {
+          if (updateCounts[i] >= 0) {
+              successCount++;
+                   
+          } else if (updateCounts[i] == Statement.SUCCESS_NO_INFO) {
+              notAavailable++;
+               
+          } else if (updateCounts[i] == Statement.EXECUTE_FAILED) {
+              failCount++;
+               
+          }
+      }
+    }
+    pstmt.close();
+    connection.close(); 
+
+%>
+</body>
+</html>

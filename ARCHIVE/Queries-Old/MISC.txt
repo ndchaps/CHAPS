@@ -1,0 +1,2 @@
+INSERT INTO location_tbl(location_id, producer_id, name, address1, address2, county, city, district, state, region, zip, country, location_name, tel)
+VALUES('MyLocation', '0', 'Joseph L', 'CS', 'NDSU', 'CASS', 'FARGO', '', '', '', '', '', 'EEEE-HA', '7015412222');
