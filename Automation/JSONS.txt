@@ -1,0 +1,17 @@
+######-----------JSON FOR CALF--------###########
+Calf_ID VARCHAR(16),
+birth_date date,
+breed varchar(16),
+reg_no varchar(30),
+reg_name varchar(30),
+elec_id varchar(30),
+sire_id bigint(20),
+dam_id bigint(20),
+sex varchar(1),
+sex_date date,
+birth_weight float,
+calving_ease tinyint(4),
+herd_id varchar(30),
+birth_notes text
+
+String myInputField="[{\"calf_id\":\"T001\",\"birth_date\":\"1990-03-06\",\"breed\":\"AN\",\"reg_no\":\"dummy_051716\",\"reg_name\":\"051716_1\",\"elec_id\":\"\",\"sire_id\":\"20177\",\"dam_id\":\"43269\",\"sex\":\"2\",\"birth_weight\":53,\"calving_ease\":1,\"herd_id\":\"H38\",\"birth_notes\":\"051716_1 birth notes\"},{\"calf_id\":\"T002\",\"birth_date\":\"2010-03-06\",\"breed\":\"AN\",\"reg_no\":\"dummy_051716\",\"reg_name\":\"051716_2\",\"elec_id\":\"\",\"sire_id\":\"20177\",\"dam_id\":\"my mom\",\"sex\":\"2\",\"birth_weight\":53,\"calving_ease\":1,\"herd_id\":\"H38\",\"birth_notes\":\"051716_2 birth notes\"}]";

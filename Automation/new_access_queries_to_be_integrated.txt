@@ -1,0 +1,38 @@
+ALTER TABLE calfback ADD COLUMN Chaps_ID LONG;
+
+UPDATE calfback INNER JOIN calfbirth ON calfbirth.calfid = calfback.calfid SET calfback.Chaps_ID = calfbirth.chaps_id
+WHERE calfbirth.calfid = calfback.calfid AND calfbirth.CalfID <> null and [calfbirth].[chaps_id] <> null;
+
+SELECT calfback.chaps_id AS chaps_id, calfback.recdate AS entry_date, calfback.recweight AS weight, calfback.recheight AS hip_height, calfback.recscore AS frame_score, calfback.status, calfback.notes, calfback.group, 'R' AS stage
+FROM calfback;
+
+SELECT calfback.chaps_id AS chaps_id, calfback.intdate AS entry_date, calfback.intweight AS weight, calfback.intheight AS hip_height, calfback.intscore AS frame_score, calfback.status, calfback.notes, calfback.group, 'I' AS stage
+FROM calfback;
+
+SELECT calfback.chaps_id AS chaps_id, calfback.findate AS entry_date, calfback.finweight AS weight, calfback.finheight AS hip_height, calfback.finscore AS frame_score, calfback.status, calfback.notes, calfback.group, 'F' AS stage
+FROM calfback;
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+ALTER TABLE calfback ADD COLUMN Chaps_ID LONG;
+
+UPDATE calfrep INNER JOIN calfbirth ON calfbirth.calfid = calfrep.calfid SET calfrep.Chaps_ID = calfbirth.chaps_id
+WHERE calfbirth.calfid = calfrep.calfid AND calfbirth.CalfID <> null and [calfbirth].[chaps_id] <> null;
+
+
+SELECT calfrep.chaps_id, calfrep.recdate AS entry_date, calfrep.recwt AS weight, calfrep.rechip AS hip_height, calfrep.recscore AS frame_score, 
+calfrep.recfat AS back_fat, calfrep.recribeye AS rib_eye, calfrep.recmarbling AS marbling, calfrep.scrotumcir AS scrotum_circum, calfrep.scrotumdate AS scrotum_date, 
+calfrep.pelvic AS pelvic_area, calfrep.pelvicdate AS pelvic_date, calfrep.status, calfrep.notes,calfrep.w365 as 365_day_weight FROM calfrep;
+
+SELECT calfrep.chaps_id, calfrep.intdate AS entry_date, calfrep.intwt AS weight, calfrep.inthip AS hip_height, calfrep.intscore AS frame_score, calfrep.intfat AS back_fat, calfrep.intribeye AS rib_eye, calfrep.intmarbling AS marbling
+FROM calfrep;
+
+SELECT calfrep.chaps_id,calfrep.daydate as entry_date, calfrep.daywt as weight, calfrep.dayhip as hip_height, calfrep.dayscore as frame_score, calfrep.dayfat as back_fat, 
+calfrep.dayribeye as rib_eye, calfrep.daymarbling as marbling FROM calfrep;
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+ALTER TABLE calffeed ADD COLUMN Chaps_ID LONG;
+
+UPDATE calffeed INNER JOIN calfbirth ON calfbirth.calfid = calffeed.calfid SET calffeed.Chaps_ID = calfbirth.chaps_id
+WHERE calfbirth.calfid = calffeed.calfid AND calfbirth.CalfID <> null and [calfbirth].[chaps_id] <> null;

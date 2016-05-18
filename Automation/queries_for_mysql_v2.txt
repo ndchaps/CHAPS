@@ -1,0 +1,513 @@
+/*DROP STATEMENTS- Do not change the order of table drop*/
+drop table if exists bull_turnout_tbl;
+
+drop table IF EXISTS DAM_COND_TBL;
+
+drop table IF EXISTS MEASUREMENT_TBL;
+
+drop table IF EXISTS BREED_ATTEMPT_TBL;
+
+drop table IF EXISTS ULTRASOUND_TBL;
+
+drop table IF EXISTS FEEDLOT_TBL;
+
+drop table IF EXISTS REPLACEMENT_TBL;
+
+drop table IF EXISTS BACKGROUND_TBL;
+
+drop table IF EXISTS WEANING_TBL;
+
+drop table IF EXISTS CARCASS_TBL;
+
+drop table IF EXISTS EPD_TBL;
+
+drop table IF EXISTS OWNERS_TBL;
+
+drop table IF EXISTS HERD_ASSO_TBL;
+
+drop table IF EXISTS HERD_TBL;
+
+drop table IF EXISTS LOCATION_TBL;
+
+drop table IF EXISTS PRODUCER_TBL;
+
+drop table IF EXISTS notes_tbl;
+
+drop table IF EXISTS CHAPS_ID_TBL;
+
+drop table IF EXISTS ENTERD_HERD_TBL;
+
+drop table IF EXISTS CULL_TBL;
+
+drop table IF EXISTS DUMMY_DATE_TBL;
+
+drop table IF EXISTS cow_breeding_tbl;
+
+drop table IF EXISTS CATTLE_NAMES_TBL;
+
+drop table IF EXISTS CATTLE_INFO_TBL;
+
+drop table IF EXISTS CATTLE_NAMES_TBL;
+
+/*CREATE STATEMENTS- dont change the order*/
+
+create table PRODUCER_TBL(
+	producer_id 	INT NOT NULL,
+	name		VARCHAR(50),
+	address1	VARCHAR(50),
+	address2	VARCHAR(50),
+	county		VARCHAR(30),
+	city		VARCHAR(30),
+	district	VARCHAR(30),
+	state		VARCHAR(30),
+	region		VARCHAR(30),
+	zip		VARCHAR(20),
+	country		VARCHAR(30),
+	tel		VARCHAR(30),
+	PRIMARY KEY(producer_id)
+);
+
+create table LOCATION_TBL(
+	location_id	VARCHAR(30) NOT NULL,
+	producer_id 	INT NOT NULL,
+	name		VARCHAR(50),
+	address1	VARCHAR(50),
+	address2	VARCHAR(50),
+	county		VARCHAR(30),
+	city		VARCHAR(30),
+	district	VARCHAR(30),
+	state		VARCHAR(30),
+	region		VARCHAR(30),
+	zip		VARCHAR(20),
+	country		VARCHAR(30),
+	location_name	VARCHAR(30),
+	tel		VARCHAR(30),
+	PRIMARY KEY (location_id,producer_id),
+	FOREIGN KEY (producer_id) REFERENCES PRODUCER_TBL(producer_id)
+);
+
+create table HERD_TBL(
+	herd_id		VARCHAR(30) NOT NULL,
+	producer_id	INT	NOT NULL,
+	herd_name	VARCHAR(30),
+	herd_desc	TEXT,
+	PRIMARY KEY (herd_id,producer_id),
+	FOREIGN KEY (producer_id) REFERENCES PRODUCER_TBL (producer_id)
+);
+
+create table HERD_ASSO_TBL(
+	herd_id		VARCHAR(30) NOT NULL,
+	producer_id	INT	NOT NULL,
+	entry_date	TIMESTAMP	NOT NULL,
+	exit_date	TIMESTAMP,
+	location_id	VARCHAR(30),
+	PRIMARY KEY (herd_id,producer_id,entry_date),
+	FOREIGN KEY (producer_id) REFERENCES PRODUCER_TBL (producer_id),
+	FOREIGN KEY (herd_id) REFERENCES HERD_TBL (herd_id),
+	FOREIGN KEY (location_id) REFERENCES LOCATION_TBL (location_id)
+);
+
+create table CATTLE_INFO_TBL(
+	herd_id		VARCHAR(30),
+	chaps_id	BIGINT NOT NULL AUTO_INCREMENT,
+	animal_id		varchar(20),
+	birth_date 	DATE,
+	breed		VARCHAR(16),
+	reg_no		VARCHAR(30),
+	reg_name	VARCHAR(30),
+	elec_id		VARCHAR(30),
+	sire_chaps_id	BIGINT,
+	sire_id		varchar(20),
+	dam_chaps_id	BIGINT,
+	dam_id		varchar(20),
+	cow_age		TINYINT,
+	sex		VARCHAR(1),	
+	birth_weight	FLOAT,
+	calving_ease	TINYINT,
+	state		VARCHAR(2),
+	sex_date	DATE,
+	lot_no 		varchar(16),
+	picture 	MEDIUMBLOB,
+	PRIMARY KEY (chaps_id)
+);
+
+create table OWNERS_TBL(
+	chaps_id	BIGINT 	NOT NULL,
+	start_date	DATE NOT NULL,
+	exit_date	DATE,
+	herd_id		VARCHAR(30),
+	producer_id	INT,
+	entry_code	VARCHAR(2),
+	exit_code	VARCHAR(2),
+	active_flag 	ENUM('A','C','P'),
+	animal_source ENUM('S','P'),	
+	PRIMARY KEY (chaps_id,start_date),
+	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id)ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY (producer_id) REFERENCES HERD_ASSO_TBL (producer_id)ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY (herd_id) REFERENCES HERD_ASSO_TBL (herd_id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+create table EPD_TBL(
+	chaps_id	BIGINT NOT NULL,
+	Calf_ID		varchar(20),
+	entry_date 	TIMESTAMP,
+	birth_weight	FLOAT,
+	wean_weight	FLOAT,
+	yearling_weight	FLOAT,
+	total_maternal	FLOAT,
+	maternal_milk	FLOAT,
+	birth_wt_arcy	FLOAT,
+	wean_wt_arcy	FLOAT,
+	yearling_wt_arcy	FLOAT,
+	total_mt_arcy		FLOAT,
+	maternal_ml_arcy	FLOAT,
+	PRIMARY KEY (chaps_id,entry_date),
+	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id)
+);
+
+create table CARCASS_TBL(
+	chaps_id	BIGINT NOT NULL,
+	Calf_ID		varchar(20),
+	carcass_date 	TIMESTAMP,
+	status		VARCHAR(2),
+	hot_carcass_wt	FLOAT,
+	fat_thickness	TINYINT,
+	kidney_kph	TINYINT,
+	rib_eye		TINYINT,
+	quality_grade	FLOAT,
+	marbling_score	INT,
+	color		VARCHAR(10),
+	texture_of_lean	VARCHAR(10),
+	maturity	VARCHAR(10),
+	conformance	VARCHAR(1),
+	muscle_score	FLOAT,
+	carcass_notes	TEXT,
+	PRIMARY KEY (chaps_id),
+	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id)
+);
+
+create table MEASUREMENT_TBL(
+	chaps_id	BIGINT NOT NULL,
+	Calf_ID		varchar(20),
+	entry_date	DATE NOT NULL,
+	weight		FLOAT,
+	hip_height	FLOAT,
+	frame_score	FLOAT,
+	status		VARCHAR(2),
+	entry_type	ENUM('W','BK','F','R','C'),
+	entry_subtype	ENUM('','R','I','F'),
+	lot_no 		varchar(16),
+	PRIMARY KEY (chaps_id,entry_date),
+	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id)
+);
+
+create table WEANING_TBL(
+	chaps_id	BIGINT NOT NULL,
+	Calf_ID		varchar(20),
+	entry_date	DATE NOT NULL,
+	manage_code	VARCHAR(2),
+	contemp_grp	VARCHAR(2),
+	muscle_grade VARCHAR(2),
+	#lot_no		VARCHAR(2),
+	PRIMARY KEY (chaps_id,entry_date),
+	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id)
+);
+
+create table BACKGROUND_TBL(
+	chaps_id	BIGINT NOT NULL,
+	Calf_ID		varchar(20),
+	entry_date	DATE NOT NULL,
+	stage	ENUM('R','I','F'),
+	PRIMARY KEY (chaps_id,entry_date,stage),
+	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id)
+);
+
+create table REPLACEMENT_TBL(
+	chaps_id	BIGINT NOT NULL,
+	Calf_ID		varchar(20),
+	entry_date	DATE NOT NULL,
+	back_fat	FLOAT,
+	rib_eye		FLOAT,
+	marbling	FLOAT,
+	365_day_weight	FLOAT,
+	scrotum_circum	FLOAT,
+	pelvic_area	FLOAT,
+	con		TINYINT,
+	scrotum_date 	DATE,
+	pelvic_date 	DATE,
+	stage	ENUM('R','I','F'),
+	PRIMARY KEY (chaps_id,entry_date,stage),
+	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id)
+);
+
+create table FEEDLOT_TBL(
+	chaps_id	BIGINT NOT NULL,
+	Calf_ID		varchar(20),
+	entry_date	DATE NOT NULL,
+	con		TINYINT,
+	back_fat	FLOAT,
+	rib_eye		FLOAT,
+	marbling	FLOAT,
+	stage	ENUM('R','I','F'),
+	PRIMARY KEY (chaps_id,entry_date,stage),
+	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id)
+);
+
+create table ULTRASOUND_TBL(
+	chaps_id	BIGINT NOT NULL,
+	Calf_ID		varchar(20),
+	entry_date	DATE NOT NULL,
+	crown_width	FLOAT,
+	body_length	FLOAT,
+	estimated_age	TINYINT,
+	sex_of_calf	VARCHAR(1),
+	PRIMARY KEY (chaps_id,entry_date),
+	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id)
+);
+
+create table BREED_ATTEMPT_TBL(
+	chaps_id	BIGINT NOT NULL,
+	Calf_ID		varchar(20),
+	entry_date	DATE NOT NULL,
+	sire_id		BIGINT,
+	concep_status	VARCHAR(2),
+	PRIMARY KEY (chaps_id,entry_date),
+	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id)
+);
+
+create table DAM_COND_TBL(
+	chaps_id	BIGINT NOT NULL,
+	Cow_ID		varchar(20),
+	entry_date	DATE NOT NULL,
+	weight		FLOAT,
+	con		TINYINT,
+	back_fat	FLOAT,
+	stage		VARCHAR(2),
+	PRIMARY KEY (chaps_id,entry_date),
+	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id)
+);
+
+create table NOTES_TBL(
+	chaps_id	BIGINT NOT NULL,
+	animal_id	varchar(20),
+	entry_date	DATE NOT NULL,
+	note_type	VARCHAR(2),
+	notes		TEXT,
+	PRIMARY KEY (chaps_id,entry_date),
+	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+create table BULL_TURNOUT_TBL(
+	herd_id		VARCHAR(30) 	NOT NULL,
+	producer_id	INT 		NOT NULL,
+	date		DATE 	NOT NULL,
+	PRIMARY KEY (herd_id,producer_id,date),
+	FOREIGN KEY (herd_id) REFERENCES HERD_TBL (herd_id),
+	FOREIGN KEY (producer_id) REFERENCES HERD_TBL (producer_id)
+);
+
+create table CULL_TBL(
+	chaps_id	BIGINT NOT NULL,
+	cow_id		varchar(20),
+	cull_date	DATE,
+	cull_code	VARCHAR(2),
+	cull_comments	VARCHAR(100),
+	PRIMARY KEY (chaps_id),
+	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+create table ENTERD_HERD_TBL(
+	chaps_id	BIGINT NOT NULL,
+	Calf_ID		varchar(20),
+	entered_herd	DATE,
+	herd_id		VARCHAR(30),
+	PRIMARY KEY (chaps_id)
+);
+
+create table DUMMY_DATE_TBL(
+	chaps_id	BIGINT NOT NULL,
+	Calf_ID		varchar(20),
+	date		VARCHAR(30),
+	PRIMARY KEY (chaps_id)
+);
+
+
+CREATE TABLE `cow_breeding_tbl` (
+  `chaps_id` bigint(20) NOT NULL,
+   Cow_ID   varchar(20),
+  `bull_turnout_date` date NOT NULL,
+  `conception_date` date DEFAULT NULL,
+  `breeding_date` date DEFAULT NULL,
+  `breeding_weight` float DEFAULT NULL,
+  `breeding_condition_score` float DEFAULT NULL,
+  `wean_date` date DEFAULT NULL,
+  `wean_weight` float DEFAULT NULL,
+  `wean_condition_score` float DEFAULT NULL,
+  PRIMARY KEY (`chaps_id`,`bull_turnout_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+create table CATTLE_NAMES_TBL(
+	chaps_id	BIGINT NOT NULL,	
+	entry_date	DATETIME,
+	cattle_name	VARCHAR(30),
+	cattle_type	ENUM('CA','CO','SI'),
+	PRIMARY KEY (chaps_id,cattle_type)
+	#,FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id)
+);
+
+/*-------------LOAD DATA IN TABLES -------*/
+INSERT INTO producer_tbl (producer_id, name, address1, address2, county, city, district, state, region, zip, country, tel)
+VALUES(0, 'Joseph L', 'CS', 'NDSU', 'CASS', 'FARGO', '', 'ND', 'COLDEST', '58102', 'USA', '7015412222');
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\location.csv' INTO TABLE location_tbl FIELDS TERMINATED BY ',';
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\herd.csv' INTO TABLE herd_tbl FIELDS TERMINATED BY ',';
+
+INSERT INTO herd_asso_tbl (herd_id,producer_id, entry_date, exit_date, location_id)
+VALUES('H38',0,'2008-01-01 00:00:01','','1');
+
+INSERT INTO BULL_TURNOUT_TBL(herd_id,producer_id,date) VALUES ('H38',0,'2007-6-18 00:00:00');
+INSERT INTO BULL_TURNOUT_TBL(herd_id,producer_id,date) VALUES ('H38',0,'2006-6-16 00:00:00');
+INSERT INTO BULL_TURNOUT_TBL(herd_id,producer_id,date) VALUES ('H38',0,'2008-6-10 00:00:00');
+INSERT INTO BULL_TURNOUT_TBL(herd_id,producer_id,date) VALUES ('H38',0,'2009-6-18 00:00:00');
+INSERT INTO BULL_TURNOUT_TBL(herd_id,producer_id,date) VALUES ('H38',0,'2010-6-1 00:00:00');
+INSERT INTO BULL_TURNOUT_TBL(herd_id,producer_id,date) VALUES ('H38',0,'2011-8-8 00:00:00');
+INSERT INTO BULL_TURNOUT_TBL(herd_id,producer_id,date) VALUES ('H38',0,'2012-8-1 00:00:00');
+INSERT INTO BULL_TURNOUT_TBL(herd_id,producer_id,date) VALUES ('H38',0,'2013-8-1 00:00:00');
+
+/*--------------Loading data in cattle_info_tbl--------------------------*/
+
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calves.csv' INTO TABLE cattle_info_tbl FIELDS TERMINATED BY ',' ENCLOSED BY '"' IGNORE 1 LINES ;
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Cows_Not_Calves.csv' INTO TABLE cattle_info_tbl FIELDS TERMINATED BY ','ENCLOSED BY '"' IGNORE 1 LINES ;
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Sires_Not_Calves.csv' INTO TABLE cattle_info_tbl FIELDS TERMINATED BY ','ENCLOSED BY '"' IGNORE 1 LINES;
+
+UPDATE cattle_info_tbl set cattle_info_tbl.herd_id = REPLACE(herd_id,char(13),'');
+
+UPDATE cattle_info_tbl set cattle_info_tbl.birth_date = '0000-01-01' where cattle_info_tbl.birth_date='0000-00-00';
+
+
+/*----------Loading data in cattle_names_tbl------------*/
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calves.csv' INTO TABLE cattle_names_tbl FIELDS TERMINATED BY ',' ENCLOSED BY '"' 
+IGNORE 1 LINES (@ignore,Chaps_id,cattle_name,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore)
+SET entry_date=curdate(),cattle_type='CA' ;
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Cows_Not_Calves.csv' INTO TABLE cattle_names_tbl FIELDS TERMINATED BY ','ENCLOSED BY '"' 
+IGNORE 1 LINES (@ignore,Chaps_id,cattle_name,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore)
+SET entry_date=CURDATE(),cattle_type='CO';
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Sires_Not_Calves.csv' INTO TABLE cattle_names_tbl FIELDS TERMINATED BY ','ENCLOSED BY '"' 
+IGNORE 1 LINES (@ignore,Chaps_id,cattle_name,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore)
+SET entry_date=CURDATE() ,cattle_type='SI';
+
+/*------Loading data in owners_tbl and cull_tbl--------------*/
+
+INSERT into owners_tbl (chaps_id,start_date,herd_id) SELECT chaps_id,birth_date,herd_id from cattle_info_tbl;
+
+
+UPDATE owners_tbl set producer_id= (SELECT producer_id from producer_tbl);
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Cows_Culled.csv' INTO TABLE cull_tbl FIELDS TERMINATED BY ','ENCLOSED BY '"' 
+IGNORE 1 LINES(chaps_id,calf_id,cull_date,cull_code);
+
+UPDATE owners_tbl INNER JOIN cull_tbl on owners_tbl.chaps_id = cull_tbl.chaps_id SET owners_tbl.exit_date = cull_tbl.cull_date 
+WHERE owners_tbl.chaps_id = cull_tbl.chaps_id ;
+
+UPDATE owners_tbl INNER JOIN cull_tbl on owners_tbl.chaps_id = cull_tbl.chaps_id SET owners_tbl.exit_code = cull_tbl.cull_code
+WHERE owners_tbl.chaps_id = cull_tbl.chaps_id ;
+
+UPDATE owners_tbl set owners_tbl.exit_code = REPLACE(exit_code,char(13),'');
+
+/*---------------Loaind data in weaning_tbl--------*/
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\CalfWean_To_Weaning.csv' 
+IGNORE INTO TABLE weaning_tbl FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'LINES TERMINATED BY '\r\n'
+IGNORE 1 LINES(chaps_id,Calf_ID,entry_date,manage_code,contemp_grp,muscle_grade,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore);
+
+UPDATE weaning_tbl set muscle_grade = "" where muscle_grade=" ";
+
+UPDATE weaning_tbl set muscle_grade = "0" where muscle_grade="0\"";
+
+
+#----------------------Loading data to background_tbl---------------------------------------#
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfback_To_Background_Receiving_Stage.csv' 
+IGNORE INTO TABLE background_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
+IGNORE 1 lines (chaps_id,Calf_ID,entry_date,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,stage);
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfback_To_Background_Interim_Stage.csv' 
+IGNORE INTO TABLE background_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
+IGNORE 1 lines (chaps_id,Calf_ID,entry_date,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,stage);
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfback_To_Background_Final_Stage.csv' 
+IGNORE INTO TABLE background_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
+IGNORE 1 lines (chaps_id,Calf_ID,entry_date,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,stage);
+
+
+
+#------------------------------Loading data to replacement_tbl-----------------------------------#
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfrep_To_Replacement_Receiving_Stage.csv' 
+IGNORE INTO TABLE replacement_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
+IGNORE 1 lines (chaps_id,Calf_ID,entry_date,@ignore,@ignore,@ignore,back_fat,rib_eye,marbling,scrotum_circum,scrotum_date,pelvic_area,pelvic_date,@ignore,@ignore,365_day_weight,stage);
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfrep_To_Replacement_Interim_Stage.csv' 
+IGNORE INTO TABLE replacement_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
+IGNORE 1 lines (chaps_id,Calf_ID,entry_date,@ignore,@ignore,@ignore,back_fat,rib_eye,marbling,stage);
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfrep_To_Replacement_Final_Stage.csv' 
+IGNORE INTO TABLE replacement_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
+IGNORE 1 lines (chaps_id,Calf_ID,entry_date,@ignore,@ignore,@ignore,back_fat,rib_eye,marbling,stage);
+
+#------------------Loading data in measurement_tbl---------------------------#
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\CalfWean_To_Weaning.csv' 
+IGNORE INTO TABLE measurement_tbl FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
+IGNORE 1 lines(chaps_id,Calf_ID,entry_date,@ignore,@ignore,@ignore,weight,hip_height,frame_score,`status`,@ignore,lot_no) set entry_type='w';
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfback_To_Background_Receiving_Stage.csv' 
+IGNORE INTO TABLE measurement_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'  LINES TERMINATED BY '\r\n'
+IGNORE 1 lines (chaps_id,Calf_ID,entry_date,weight,hip_height,frame_score,`status`,@ignore,@ignore,entry_subtype)  set entry_type='bk';
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfback_To_Background_Interim_Stage.csv' 
+IGNORE INTO TABLE measurement_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
+IGNORE 1 lines (chaps_id,Calf_ID,entry_date,weight,hip_height,frame_score,`status`,@ignore,@ignore,entry_subtype) set entry_type='bk';
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfback_To_Background_Final_Stage.csv' 
+IGNORE INTO TABLE measurement_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
+IGNORE 1 lines (chaps_id,Calf_ID,entry_date,weight,hip_height,frame_score,`status`,@ignore,@ignore,entry_subtype) set entry_type='bk';
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfrep_To_Replacement_Receiving_Stage.csv' 
+IGNORE INTO TABLE measurement_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
+IGNORE 1 lines (chaps_id,Calf_ID,entry_date,weight,hip_height,frame_score,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,`status`,@ignore,@ignore,entry_subtype) set entry_type='r';
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfrep_To_Replacement_Interim_Stage.csv' 
+IGNORE INTO TABLE measurement_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
+IGNORE 1 lines (chaps_id,Calf_ID,entry_date,weight,hip_height,frame_score,@ignore,@ignore,@ignore,entry_subtype) set entry_type='r';
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfrep_To_Replacement_Final_Stage.csv' 
+IGNORE INTO TABLE measurement_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
+IGNORE 1 lines (chaps_id,Calf_ID,entry_date,weight,hip_height,frame_score,@ignore,@ignore,@ignore,entry_subtype) set entry_type='r';
+
+#---------------------------Loading data to notes_tbl-----------------------------------#
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\CalfWean_To_Weaning.csv' 
+IGNORE INTO TABLE notes_tbl FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
+IGNORE 1 lines(chaps_id,Calf_ID,entry_date,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,notes,@ignore) set note_type='w';
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfback_To_Background_Receiving_Stage.csv' 
+IGNORE INTO TABLE notes_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
+IGNORE 1 lines (chaps_id,Calf_ID,entry_date,@ignore,@ignore,@ignore,@ignore,notes,@ignore,@ignore) set note_type='bk';
+
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfrep_To_Replacement_Receiving_Stage.csv' 
+IGNORE INTO TABLE notes_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
+IGNORE 1 lines (chaps_id,Calf_ID,entry_date,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,notes,@ignore,@ignore) set note_type='r';
+
+/*---------------LOADING DATA TO cow_breeding_tbl---------------------*\
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Cowbrd_To_Breeding.csv' INTO TABLE COW_BREEDING_TBL FIELDS TERMINATED BY ',' ENCLOSED BY '"' IGNORE 1 LINES;
+
+
+

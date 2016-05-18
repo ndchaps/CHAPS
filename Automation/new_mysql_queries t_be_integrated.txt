@@ -1,0 +1,89 @@
+#----------------------Loading data to weaning_tbl---------------------------------------#
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\CalfWean_To_Weaning.csv' 
+IGNORE INTO TABLE weaning_tbl FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'LINES TERMINATED BY '\r\n'
+(chaps_id,entry_date,manage_code,contemp_grp,muscle_grade,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore);
+
+#----------------------Loading data to background_tbl---------------------------------------#
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfback_To_Background_Receiving_Stage.csv' 
+IGNORE INTO TABLE background_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
+IGNORE 1 lines (chaps_id,entry_date,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,stage);
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfback_To_Background_Interim_Stage.csv' 
+IGNORE INTO TABLE background_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
+IGNORE 1 lines (chaps_id,entry_date,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,stage);
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfback_To_Background_Final_Stage.csv' 
+IGNORE INTO TABLE background_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
+IGNORE 1 lines (chaps_id,entry_date,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,stage);
+
+
+#------------------------------Loading data to replacement_tbl-----------------------------------#
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfrep_To_Replacement_Receiving_Stage.csv' 
+IGNORE INTO TABLE replacement_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
+IGNORE 1 lines (chaps_id,entry_date,@ignore,@ignore,@ignore,back_fat,rib_eye,marbling,scrotum_circum,scrotum_date,pelvic_area,pelvic_date,@ignore,@ignore,365_day_weight,stage);
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfrep_To_Replacement_Interim_Stage.csv' 
+IGNORE INTO TABLE replacement_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
+IGNORE 1 lines (chaps_id,entry_date,@ignore,@ignore,@ignore,back_fat,rib_eye,marbling,stage);
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfrep_To_Replacement_Final_Stage.csv' 
+IGNORE INTO TABLE replacement_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
+IGNORE 1 lines (chaps_id,entry_date,@ignore,@ignore,@ignore,back_fat,rib_eye,marbling,stage);	
+
+#-----------------------------loading data in feedlot_tbl(NOT SURE YET)-------------------------#
+
+SELECT calffeed.Chaps_ID, calffeed.CalfID, calffeed.recscore, calffeed.recrea, calffeed.recmar, calffeed.status, calffeed.notes
+FROM calffeed;
+
+SELECT calffeed.Chaps_ID, calffeed.CalfID, calffeed.int2date as entry_date, calffeed.int2wt as weight, calffeed.int2cond con, calffeed.int2fat as back_fat,intrea, calffeed.intscore as frame_score,calffeed.intmar as marbling, 'I' AS stage
+FROM calffeed;
+
+
+SELECT calffeed.Chaps_ID, calffeed.CalfID, calffeed.findate as entry_date, calffeed.finwt as weight, calffeed.fincond as con, calffeed.finfat as back_fat,finrea calffeed.finmarbling as marbling,'F' as stage
+FROM calffeed;
+
+#------------------Loading data in measurement_tbl---------------------------#
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\CalfWean_To_Weaning.csv' 
+IGNORE INTO TABLE measurement_tbl FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
+(chaps_id,entry_date,@ignore,@ignore,@ignore,weight,hip_height,frame_score,`status`,@ignore,lot_no) set entry_type='w';
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfback_To_Background_Receiving_Stage.csv' 
+IGNORE INTO TABLE measurement_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'  LINES TERMINATED BY '\r\n'
+IGNORE 1 lines (chaps_id,entry_date,weight,hip_height,frame_score,`status`,@ignore,@ignore,entry_subtype)  set entry_type='bk';
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfback_To_Background_Interim_Stage.csv' 
+IGNORE INTO TABLE measurement_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
+IGNORE 1 lines (chaps_id,entry_date,weight,hip_height,frame_score,`status`,@ignore,@ignore,entry_subtype) set entry_type='bk';
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfback_To_Background_Final_Stage.csv' 
+IGNORE INTO TABLE measurement_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
+IGNORE 1 lines (chaps_id,entry_date,weight,hip_height,frame_score,`status`,@ignore,@ignore,entry_subtype) set entry_type='bk';
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfrep_To_Replacement_Receiving_Stage.csv' 
+IGNORE INTO TABLE measurement_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
+IGNORE 1 lines (chaps_id,entry_date,weight,hip_height,frame_score,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,`status`,@ignore,@ignore,entry_subtype) set entry_type='r';
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfrep_To_Replacement_Interim_Stage.csv' 
+IGNORE INTO TABLE measurement_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
+IGNORE 1 lines (chaps_id,entry_date,weight,hip_height,frame_score,@ignore,@ignore,@ignore,entry_subtype) set entry_type='r';
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfrep_To_Replacement_Final_Stage.csv' 
+IGNORE INTO TABLE measurement_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
+IGNORE 1 lines (chaps_id,entry_date,weight,hip_height,frame_score,@ignore,@ignore,@ignore,entry_subtype) set entry_type='r';
+
+#---------------------------Loading data to notes_tbl-----------------------------------#
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\CalfWean_To_Weaning.csv' 
+IGNORE INTO TABLE notes_tbl FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
+(chaps_id,entry_date,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,notes,@ignore) set note_type='w';
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfback_To_Background_Receiving_Stage.csv' 
+IGNORE INTO TABLE notes_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
+IGNORE 1 lines (chaps_id,entry_date,@ignore,@ignore,@ignore,@ignore,notes,@ignore,@ignore) set note_type='bk';
+
+
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfrep_To_Replacement_Receiving_Stage.csv' 
+IGNORE INTO TABLE notes_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
+IGNORE 1 lines (chaps_id,entry_date,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,notes,@ignore,@ignore) set note_type='r';
