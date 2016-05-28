@@ -17,7 +17,7 @@ BEGIN
 		#Update the cow_age for this calf entry
 		Update cattle_info_tbl a join cattle_info_tbl b on a.dam_id=b.animal_id  set a.cow_age=(Curdate()-b.birth_date) where a.chaps_id= @my_chaps_id;
 		#insert the newly generated chaps id and the calf name for this cow in cattle names table if the cow is new to the system
-		IF NOT ISNULL(input_calf_id_at_birth) THEN 
+		IF NOT ISNULL(input_calf_id_at_birth) AND input_calf_id_at_birth!='' THEN 
 			insert into cattle_names_tbl(chaps_id,entry_date,cattle_name,cattle_type) values( @my_chaps_id,CURDATE(),input_calf_id_at_birth,'CA');
 		END IF;
 		#insert the newly generated chaps id and cow name for this cow in cattle names table if the cow is new to the system
@@ -28,7 +28,7 @@ BEGIN
 		INSERT into notes_tbl(chaps_id,animal_id,entry_date,note_type,notes) values(LAST_INSERT_ID(),input_cow_id,CURDATE(),'cp',input_profile_notes);
 		#check if the user enters the cull information, if yes, enter it into the cull_tbl
 		IF NOT ISNULL(input_date_culled) THEN
-			INSERT into cull_tbl(chaps_id,cow_id,cull_date,cull_code,cull_comments) values(@my_chaps_id,input_cow_id,input_date_culled,input_reason_culled,input_cull_comments);
+			INSERT into cull_tbl(chaps_id,animal_id,cull_date,cull_code,cull_comments) values(@my_chaps_id,input_cow_id,input_date_culled,input_reason_culled,input_cull_comments);
 		END IF;
 	ELSE 
 		IF NOT ISNULL(input_calf_id_at_birth) THEN
@@ -42,7 +42,7 @@ BEGIN
 			INSERT into notes_tbl(chaps_id,animal_id,entry_date,note_type,notes) values(LAST_INSERT_ID(),input_cow_id,CURDATE(),'cp',profile_notes);
 			#check if the user enters the cull information, if yes, enter it into the cull_tbl
 			IF NOT ISNULL(input_date_culled) THEN
-				INSERT into cull_tbl(chaps_id,cow_id,cull_date,cull_code,cull_comments) values(@my_chaps_id,input_cow_id,input_date_culled,input_reason_culled,input_cull_comments);
+				INSERT into cull_tbl(chaps_id,animal_id,cull_date,cull_code,cull_comments) values(@my_chaps_id,input_cow_id,input_date_culled,input_reason_culled,input_cull_comments);
 			END IF;
 		END IF;
 	END IF;

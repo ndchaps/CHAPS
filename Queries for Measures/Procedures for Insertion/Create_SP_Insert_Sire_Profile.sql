@@ -17,7 +17,7 @@ BEGIN
 		#Update the cow_age for this sire entry
 		Update cattle_info_tbl a join cattle_info_tbl b on a.dam_id=b.animal_id  set a.cow_age=(Curdate()-b.birth_date) where a.chaps_id= @my_chaps_id;
 		#insert the newly generated chaps id and the sire for this sire in cattle names table if the sire is new to the system
-		IF NOT ISNULL(input_calf_id_at_birth) THEN 
+		IF NOT ISNULL(input_calf_id_at_birth) AND input_calf_id_at_birth!='' THEN 
 			insert into cattle_names_tbl(chaps_id,entry_date,cattle_name,cattle_type) values( @my_chaps_id,CURDATE(),input_calf_id_at_birth,'CA');
 		END IF;
 		#insert the newly generated chaps id and sire name for this sire in cattle names table if the sire is new to the system
@@ -27,9 +27,9 @@ BEGIN
 		#insert this sire's profile notes to notes table
 		INSERT into notes_tbl(chaps_id,animal_id,entry_date,note_type,notes) values(LAST_INSERT_ID(),input_sire_id,CURDATE(),'SP',input_profile_notes);
 		#check if the user enters the cull information, if yes, enter it into the cull_tbl
-		#IF NOT ISNULL(input_date_culled) THEN
-			#INSERT into cull_tbl(chaps_id,cow_id,cull_date,cull_code,cull_comments) values(@my_chaps_id,input_sire_id,input_date_culled,input_reason_culled,input_cull_comments);
-		#END IF;
+		IF NOT ISNULL(input_date_culled) THEN
+			INSERT into cull_tbl(chaps_id,animal_id,cull_date,cull_code,cull_comments) values(@my_chaps_id,input_sire_id,input_date_culled,input_reason_culled,input_cull_comments);
+		END IF;
 	ELSE 
 		IF NOT ISNULL(input_calf_id_at_birth) THEN
 			SET @my_chaps_id= (Select chaps_id from cattle_info_tbl where animal_id=input_calf_id_at_birth);
@@ -41,9 +41,9 @@ BEGIN
 
 			INSERT into notes_tbl(chaps_id,animal_id,entry_date,note_type,notes) values(LAST_INSERT_ID(),input_sire_id,CURDATE(),'SP',profile_notes);
 			#check if the user enters the cull information, if yes, enter it into the cull_tbl
-			#IF NOT ISNULL(input_date_culled) THEN
-				#INSERT into cull_tbl(chaps_id,cow_id,cull_date,cull_code,cull_comments) values(@my_chaps_id,input_sire_id,input_date_culled,input_reason_culled,input_cull_comments);
-			#END IF;
+			IF NOT ISNULL(input_date_culled) THEN
+				INSERT into cull_tbl(chaps_id,animal_id,cull_date,cull_code,cull_comments) values(@my_chaps_id,input_sire_id,input_date_culled,input_reason_culled,input_cull_comments);
+			END IF;
 		END IF;
 	END IF;
 END//

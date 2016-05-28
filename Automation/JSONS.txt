@@ -15,3 +15,29 @@ herd_id varchar(30),
 birth_notes text
 
 String myInputField="[{\"calf_id\":\"T001\",\"birth_date\":\"1990-03-06\",\"breed\":\"AN\",\"reg_no\":\"dummy_051716\",\"reg_name\":\"051716_1\",\"elec_id\":\"\",\"sire_id\":\"20177\",\"dam_id\":\"43269\",\"sex\":\"2\",\"birth_weight\":53,\"calving_ease\":1,\"herd_id\":\"H38\",\"birth_notes\":\"051716_1 birth notes\"},{\"calf_id\":\"T002\",\"birth_date\":\"2010-03-06\",\"breed\":\"AN\",\"reg_no\":\"dummy_051716\",\"reg_name\":\"051716_2\",\"elec_id\":\"\",\"sire_id\":\"20177\",\"dam_id\":\"my mom\",\"sex\":\"2\",\"birth_weight\":53,\"calving_ease\":1,\"herd_id\":\"H38\",\"birth_notes\":\"051716_2 birth notes\"}]";
+
+##########--------------JSON FOR COWS------------#############
+input_herd_id varchar(16),
+input_cow_id varchar(20),
+input_calf_id_at_birth varchar(2),
+input_birth_date date,
+input_breed VARCHAR(16),
+input_reg_num VARCHAR(30),
+input_reg_name VARCHAR(30),
+input_elec_id VARCHAR(30),
+input_sire_id VARCHAR(20),
+input_dam_id VARCHAR(20),
+input_date_entered_herd date ,
+input_active_flag varchar(3),
+input_animal_source ENUM('S','P'),
+input_date_culled date,
+input_reason_culled varchar(2),
+input_cull_comments VARCHAR(100),
+input_profile_notes text)
+
+String CowProfileJson="[{\"herd_id\":\"H38\",\"cow_id\":\"LISA\",\"calf_id_at_birth\":\"T004\",\"birth_date\":\"1990-03-06\",\"breed\":\"AN\",\"reg_no\":\"dummy_051716\",\"reg_name\":\"051716_1\",\"elec_id\":\"\",\"sire_id\":\"20177\",\"dam_id\":\"43269\",\"date_entered_herd\":\"2013-01-02\",\"source\":\"P\",\"active_flag\":\"A\",\"date_culled\":\"\",\"reason_culled\":\"\",\"cull_comments\":\"\",\"profile_notes\":\"first cow profile notes\",\"premise_id\":\"P8\"},{\"herd_id\":\"H38\",\"cow_id\":\"LISA\",\"calf_id_at_birth\":\"T004\",\"birth_date\":\"1990-03-06\",\"breed\":\"AN\",\"reg_no\":\"dummy_051716\",\"reg_name\":\"051716_1\",\"elec_id\":\"\",\"sire_id\":\"20177\",\"dam_id\":\"43269\",\"date_entered_herd\":\"2013-01-02\",\"source\":\"P\",\"active_flag\":\"A\",\"date_culled\":\"2015-01-02\",\"reason_culled\":\"G\",\"cull_comments\":\"had a good amount of mass\",\"profile_notes\":\"second cow profile notes\",\"premise_id\":\"P8\"}]";
+
+#################---------------JSON FOR SIRE------------------############
+String myInputField="[{\"herd_id\":\"H38\",\"sire_id\":\"MYSIRE\",\"calf_id_at_birth\":\"\",\"birth_date\":\"1990-03-06\",\"breed\":\"AN\",\"reg_no\":\"dummy_051716\",\"reg_name\":\"051716_5\",\"elec_id\":\"\",\"sire_id_of_sire\":\"20177\",\"dam_id_of_sire\":\"43269\",\"date_entered_herd\":\"2013-01-02\",\"source\":\"P\",\"active_flag\":\"A\",\"date_culled\":\"2015-02-02\",\"reason_culled\":\"\",\"cull_comments\":\"\",\"profile_notes\":\"first cow profile notes\",\"premise_id\":\"P8\"},{\"herd_id\":\"H38\",\"sire_id\":\"LISA\",\"calf_id_at_birth\":\"\",\"birth_date\":\"1990-03-06\",\"breed\":\"AN\",\"reg_no\":\"dummy_051716\",\"reg_name\":\"051716_6\",\"elec_id\":\"\",\"sire_id_of_sire\":\"20177\",\"dam_id_of_sire\":\"43269\",\"date_entered_herd\":\"2013-01-02\",\"source\":\"P\",\"active_flag\":\"A\",\"date_culled\":\"2015-01-02\",\"reason_culled\":\"G\",\"cull_comments\":\"had a good amount of mass\",\"profile_notes\":\"second cow profile notes\",\"premise_id\":\"P8\"}]";
+
+----------------------------------------------------------------------------------------------------------------------

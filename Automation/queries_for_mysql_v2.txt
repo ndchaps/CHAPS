@@ -308,7 +308,7 @@ create table BULL_TURNOUT_TBL(
 
 create table CULL_TBL(
 	chaps_id	BIGINT NOT NULL,
-	cow_id		varchar(20),
+	animal_id		varchar(20),
 	cull_date	DATE,
 	cull_code	VARCHAR(2),
 	cull_comments	VARCHAR(100),
