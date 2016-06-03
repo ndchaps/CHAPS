@@ -41,3 +41,19 @@ String CowProfileJson="[{\"herd_id\":\"H38\",\"cow_id\":\"LISA\",\"calf_id_at_bi
 String myInputField="[{\"herd_id\":\"H38\",\"sire_id\":\"MYSIRE\",\"calf_id_at_birth\":\"\",\"birth_date\":\"1990-03-06\",\"breed\":\"AN\",\"reg_no\":\"dummy_051716\",\"reg_name\":\"051716_5\",\"elec_id\":\"\",\"sire_id_of_sire\":\"20177\",\"dam_id_of_sire\":\"43269\",\"date_entered_herd\":\"2013-01-02\",\"source\":\"P\",\"active_flag\":\"A\",\"date_culled\":\"2015-02-02\",\"reason_culled\":\"\",\"cull_comments\":\"\",\"profile_notes\":\"first cow profile notes\",\"premise_id\":\"P8\"},{\"herd_id\":\"H38\",\"sire_id\":\"LISA\",\"calf_id_at_birth\":\"\",\"birth_date\":\"1990-03-06\",\"breed\":\"AN\",\"reg_no\":\"dummy_051716\",\"reg_name\":\"051716_6\",\"elec_id\":\"\",\"sire_id_of_sire\":\"20177\",\"dam_id_of_sire\":\"43269\",\"date_entered_herd\":\"2013-01-02\",\"source\":\"P\",\"active_flag\":\"A\",\"date_culled\":\"2015-01-02\",\"reason_culled\":\"G\",\"cull_comments\":\"had a good amount of mass\",\"profile_notes\":\"second cow profile notes\",\"premise_id\":\"P8\"}]";
 
 ----------------------------------------------------------------------------------------------------------------------
+
+############Jsons for calf wean##################################################
+
+input_calf_id
+input_date_weighed
+input_wean_weight
+input_manage_code
+input_wean_status
+input_hip_height
+input_date_measured
+input_contemp_grp
+input_muscle_grade
+input_frame_score
+input_lot
+input_weaning_notes
+String myInputField="[{\"calf_id\":\"T001\",\"date_weighed\":\"1990-06-06\",\"wean_weight\":53,\"manage_code\":'m',\"date_measured\":\"\",\"hip_height\":3.8,\"contemp_grp\":\"BEEF\",\"muscle_garde\":\"A\",\"frame_score\":1,\"status\":\"\",\"weaning_notes\":\"060216_1 weaning notes\"},{\"calf_id\":\"T002\",\"date_weighed\":\"1990-06-06\",\"wean_weight\":53,\"manage_code\":'m',\"date_measured\":\"\",\"hip_height\":3.8,\"contemp_grp\":\"BEEF\",\"muscle_garde\":\"A\",\"frame_score\":1,\"status\":\"\",\"weaning_notes\":\"060216_2 weaning notes\"}]";

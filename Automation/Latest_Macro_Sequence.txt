@@ -1,0 +1,235 @@
+
+1) 1_Alter_Calf_Birth
+	ALTER TABLE calfbirth ADD Chaps_ID AUTOINCREMENT(1,1)
+--------------------------------------------------------------------
+2) 2_SchemaCopy_Cowprof_Cowprof1
+	select * into cowprof_1 from cowprof where 1=2
+--------------------------------------------------------------------
+3) 3_Alter_Cowprof1
+	Alter table cowprof_1 add column [Chaps_ID] AutoIncrement(10001,1)
+-------------------------------------------------------------------
+4) 4_Insert_Cowprof1_from_Cowprof
+	insert into cowprof_1 select * from cowprof
+------------------------------------------------------------------
+5) 5_SchemaCopy_Sireprof_Sireprof1
+	select * into sireprof_1 from sireprof where 1=2
+-----------------------------------------------------------------
+6) 6_Alter_Sire_Prof1
+	Alter table sireprof_1 add column [Chaps_ID] AutoIncrement(20001,1)
+-----------------------------------------------------------------
+7) 7_Insert_Sireprof1
+	insert into sireprof_1 select * from sireprof
+--------------------------------------------------------------
+8) 8_Alter_Cowprof1_ChapsId_Col
+	ALTER TABLE cowprof_1 ALTER COLUMN Chaps_ID LONG
+-------------------------------------------------------------
+9) 9_Update_Unknown_ChapsId_Cowprof_1
+	Update cowprof_1 set Chaps_ID=-2 where cowID='Unknown'
+---------------------------------------------------------
+10)10_Update_Cowprof1
+	UPDATE cowprof_1  INNER JOIN calfbirth ON cowprof_1.calfid = calfbirth.CalfID SET cowprof_1.chaps_id = [calfbirth].[chaps_id]
+	WHERE (([cowprof_1].[calfid]=[calfbirth].[CalfID])) AND calfbirth.CalfID <> null and [calfbirth].[chaps_id] <> null;
+-------------------------------------------------------------------------
+11) 11_Update_Sireprof1
+	UPDATE sireprof_1 INNER JOIN calfbirth ON sireprof_1.calfid = calfbirth.CalfID SET sireprof_1.chaps_id = [calfbirth].[chaps_id]
+	WHERE (([sireprof_1].[calfid]=[calfbirth].[CalfID]))AND calfbirth.CalfID <> null and [calfbirth].[chaps_id] <> null;
+-----------------------------------------------------------------------
+12) 
+
+ALTER TABLE sireprof_1 ALTER COLUMN Chaps_ID LONG
+
+Update sireprof_1 set Chaps_ID=-1 where SireID='UNKN'
+
+
+
+
+------------------------------------------------------------------------
+
+
+Alter Table calfbirth ADD COLUMN Cow_ChapsID LONG;
+
+Alter Table calfbirth ADD COLUMN Sire_ChapsID LONG;
+
+UPDATE calfbirth INNER JOIN cowprof_1 ON calfbirth.CowID = cowprof_1.CowID SET calfbirth.Cow_ChapsID = cowprof_1.chaps_id
+WHERE calfbirth.CowID = cowprof_1.CowID;
+
+UPDATE calfbirth INNER JOIN sireprof_1 ON calfbirth.sireID = sireprof_1.sireID SET calfbirth.Sire_ChapsID = sireprof_1.chaps_id
+WHERE calfbirth.sireID = sireprof_1.sireID;
+
+-------------------------------------------------------------------------------------------------------------
+
+#Update Chaps_ID in Calf_Wean table(ChapsId-Update-of-Calfwean-From-CalfBirth)
+ALTER TABLE calfwean ADD COLUMN Chaps_ID LONG ;\
+
+UPDATE calfwean INNER JOIN calfbirth ON calfwean.calfid = calfbirth.calfid SET calfwean.chaps_id = calfbirth.chaps_id
+WHERE calfwean.calfid = calfbirth.calfid;
+
+------------------------------------------------------------------------------------------------------
+
+ALTER TABLE cowbrd ADD COLUMN Chaps_ID LONG
+
+UPDATE cowbrd INNER JOIN cowprof_1 ON cowbrd.cowid = cowprof_1.cowid SET cowbrd.chaps_id = cowprof_1.chaps_id
+WHERE cowbrd.cowid = cowprof_1.cowid;
+
+-------------------------------------------------------------------------------------------------
+
+ALTER TABLE calfback ADD COLUMN Chaps_ID LONG
+
+UPDATE calfback INNER JOIN calfbirth ON calfback.calfid = calfbirth.calfid SET calfback.chaps_id = calfbirth.chaps_id
+WHERE calfback.CalfID = calfbirth.CalfID and calfbirth.CalfID <> null and [calfbirth].[chaps_id] <> null;
+
+--------------------------------------------------------------------------------------------------
+ALTER TABLE calfrep ADD COLUMN Chaps_ID LONG
+
+UPDATE calfrep INNER JOIN calfbirth ON calfrep.calfid = calfbirth.calfid SET calfrep.chaps_id = calfbirth.chaps_id
+WHERE calfrep.CalfID = calfbirth.CalfID and calfbirth.CalfID <> null and [calfbirth].[chaps_id] <> null;
+
+-------------------------------------------------------------------------------------------------------
+ALTER TABLE calffeed ADD COLUMN Chaps_ID LONG
+
+UPDATE calffeed INNER JOIN calfbirth ON calffeed.calfid = calfbirth.calfid SET calffeed.chaps_id = calfbirth.chaps_id
+WHERE calffeed.CalfID = calfbirth.CalfID and calfbirth.CalfID <> null and [calfbirth].[chaps_id] <> null;
+
+------------------------------------------------------------------------------------------------------
+ALTER TABLE calfcarcass ADD COLUMN Chaps_ID LONG
+
+UPDATE calfcarcass INNER JOIN calfbirth ON calfcarcass.calfid = calfbirth.calfid SET calfcarcass.chaps_id = calfbirth.chaps_id
+WHERE calfcarcass.CalfID = calfbirth.CalfID and calfbirth.CalfID <> null and [calfbirth].[chaps_id] <> null;
+
+
+-----------------------------------------------------------------------------------------------
+=============Export Data now==========================================================================================================
+#export to Calves(these are the calves which are still calves,not turned into cows or bulls)
+SELECT *FROM 
+	(Select HerdID,Chaps_ID,Format([birthdate],"YYYY/MM/DD") AS birth_date,breed,registration,regname,elecid,sire_chapsID,Cow_chapsID,CowAge,sex,birthwt,calvingease from calfbirth
+	where Chaps_ID NOT IN(Select Chaps_ID from cowprof_1)
+	)  AS A
+WHERE Chaps_ID NOT IN (Select Chaps_ID from sireprof_1);
+
+
+#export to Cows-Not-Calves
+SELECT one.HerdID, one.Chaps_ID, Format([one.birthdate],"YYYY/MM/DD") as birth_date, one.breed, one.regnum, one.regname, 
+one.elecid, three.chaps_ID as Sire_ChapsID, two.chaps_ID AS Cow_ChapsID, Null AS CowAge, '2' AS sex, Null AS birthwt, Null AS calvingease
+FROM (cowprof_1 one LEFT JOIN cowprof_1 two on one.dam=two.CowID)
+LEFT JOIN sireprof_1 three on one.sire=three.SireID
+
+#export to Sires-Not-Calves
+SELECT one.HerdID, one.Chaps_ID, FORMAT([one.birthdate],"YYYY/MM/DD"), one.breed, one.regnum, one.regname, one.elecid, two.Chaps_ID AS Sire_ChapsID, three.Chaps_ID AS Cow_ChpasID, Null AS CowAge, '1' AS sex, Null AS birthwt, Null AS calvingease
+FROM (sireprof_1 AS one LEFT JOIN sireprof_1 AS two ON one.sire=two.SireID) LEFT JOIN cowprof_1 AS three ON one.dam=three.cowID;
+
+#export from Calf-Wean to weaning_tbl(export the data to Calfwean-To-Weaning-TBL)
+SELECT chaps_id, dateweighed, managecode, group, grade FROM calfwean;
+
+#export from Calf-Wean to meausrement_tbl(export the data to Calfwean-To-Measurement-TBL)
+SELECT calfwean.chaps_id, format([calfwean.dateweighed],"YYYY/MM/DD") AS date_weighed, calfwean.actweight, calfwean.chipheight, calfwean.score, Null AS status, 'w' as entry_type
+FROM calfwean;
+
+#export from cowbrd to cow_breeidng_tbl(export the data to Cow_Breeding_Tbl.csv)
+select chaps_id,calfdate as BUll_Turnout_Date,conceptdate,breeddate,breedwt,breedcond,weandate,weanwt,weancond as Wean_Condition_Score from cowbrd;
+
+#export to Cows_Culled
+Select chaps_id,dateculled,reasonculled from cowprof_1;
+
+/---------to be done--------------------------------------\
+#export from calfback to background_tbl (export the data to Calfback_To_Background_Tbl.csv)
+
+
+#export from calfback to meausrement_tbl(export the data to Calfback_To_MeasurementTbl.csv)
+
+#export from calfrep to replacement_tbl (export the data to Calfback_To_Replacement_Tbl.csv)
+
+#export from calfrep to meausrement_tbl(export the data to Calfrep_To_MeasurementTbl.csv)
+
+#export from calffeed to feedlot_tbl(export the data to Calfback_To_Feedlot_Tbl.csv)
+
+#export from calffeed to meausrement_tbl(export the data to Calffeed_To_MeasurementTbl.csv)
+
+#export from calfcarcass to carcass_tbl (export the data to Calfback_To_Carcass_Tbl.csv)
+
+#export from calfcarcass to meausrement_tbl(export the data to Calfcarcass_To_MeasurementTbl.csv)
+/------------------------------------------------------------\
+=====================================================================================================================================
+
+#Create table cattle_info_tbl in mysql
+CREATE TABLE `cattle_info_tbl` (
+	`herd_id` varchar(30) DEFAULT NULL,
+	`chaps_id` bigint(20) NOT NULL,
+	`birth_date` date DEFAULT NULL,
+	`breed` varchar(16) DEFAULT NULL,
+	`reg_no` varchar(30) DEFAULT NULL,
+	`reg_name` varchar(30) DEFAULT NULL,
+	`elec_id` varchar(30) DEFAULT NULL,
+	`sire_id` bigint(20) DEFAULT NULL,
+	`dam_id` bigint(20) DEFAULT NULL,
+	`cow_age` tinyint(4) DEFAULT NULL,
+	`sex` varchar(1) DEFAULT NULL,
+	`birth_weight` float DEFAULT NULL,
+	`calving_ease` tinyint(4) DEFAULT NULL,
+	`state` varchar(2) DEFAULT NULL,
+	`sex_date` date DEFAULT NULL,  
+	PRIMARY KEY (`chaps_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+#Calf-Wean to meausrement_tbl(export the data to Calfwean-To-Measurement-TBL)
+SELECT calfwean.chaps_id, calfwean.dateweighed, calfwean.actweight, calfwean.chipheight, calfwean.score FROM calfwean;
+
+#Create table measurement_tbl
+CREATE TABLE `measurement_tbl` (
+  `chaps_id` bigint(20) NOT NULL,
+  `entry_date` date NOT NULL,
+  `weight` float DEFAULT NULL,
+  `hip_height` float DEFAULT NULL,
+  `frame_score` float DEFAULT NULL,
+  `status` varchar(2) DEFAULT NULL,
+  PRIMARY KEY (`chaps_id`,`entry_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+#Calf-Wean to weaning_tbl(export the data to Calfwean-To-Weaning-TBL);
+SELECT chaps_id, dateweighed, managecode, group, grade FROM calfwean;
+
+#create table weaning_tbl
+CREATE TABLE `weaning_tbl` (
+  `chaps_id` bigint(20) NOT NULL,
+  `entry_date` date NOT NULL,
+  `manage_code` varchar(2) DEFAULT NULL,
+  `contemp_grp` varchar(2) DEFAULT NULL,
+  `muscle_grade` varchar(2) DEFAULT NULL,
+  `lot_no` varchar(2) DEFAULT NULL,
+  PRIMARY KEY (`chaps_id`,`entry_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+Update cowprof_1 set Chaps_ID=0 where cowID='Unknown'
+
+Update sireprof_1 set Chaps_ID=-1 where SireID='UNKN'
+
+Alter Table calfbirth ADD COLUMN Cow_ChapsID LONG;
+
+Alter Table calfbirth ADD COLUMN Sire_ChapsID LONG;
+
+UPDATE calfbirth INNER JOIN cowprof_1 ON calfbirth.CowID = cowprof_1.CowID SET calfbirth.Cow_ChapsID = cowprof_1.chaps_id
+WHERE calfbirth.CowID = cowprof_1.CowID;
+
+UPDATE calfbirth INNER JOIN sireprof_1 ON calfbirth.sireID = sireprof_1.sireID SET calfbirth.Sire_ChapsID = sireprof_1.chaps_id
+WHERE calfbirth.sireID = sireprof_1.sireID;
+
+
+----------------------OLD QUERIES--------------------------------------------------------------------
+
+Select * from(
+Select HerdID,Chaps_ID,birthdate,breed,registration,regname,elecid,sire_ChapsID,Cow_ChapsID,CowAge,sex,birthwt,calvingease from calfbirth
+where Chaps_ID NOT IN(Select Chaps_ID from cowprof_1)
+)A where Chaps_ID NOT IN (Select Chaps_ID from sireprof_1);
+
+SELECT cowprof_1.HerdID, cowprof_1.Chaps_ID, Format([cowprof_1.birthdate],"YYYY/MM/DD") as birth_date, cowprof_1.breed, cowprof_1.regnum, cowprof_1.regname, cowprof_1.elecid, cowprof_1.sire, cowprof_1.dam AS COWID, Null AS CowAge, '2' AS sex, Null AS birthwt, Null AS calvingease
+FROM cowprof_1
+
+SELECT sireprof_1.HerdID, sireprof_1.Chaps_ID, sireprof_1.birthdate, sireprof_1.breed, sireprof_1.regnum, sireprof_1.regname, sireprof_1.elecid, sireprof_1.sire, sireprof_1.dam, Null AS CowAge, '1' AS sex, Null AS birthwt, Null AS calvingease
+FROM sireprof_1;
+
+SELECT one.HerdID, one.Chaps_ID, one.birthdate, one.breed, one.regnum, one.regname, one.elecid, two.sireID as Sire_ChapsID, three.cowID as Cow_ChpasID,
+Null AS CowAge, '1' AS sex, Null AS birthwt, Null AS calvingease
+FROM sireprof_1 one LEFT JOIN sireprof_1 two on one.sire=two.SireID
+LEFT JOIN cowprof_1 three on one.dam=three.cowID

@@ -111,7 +111,7 @@ create table CATTLE_INFO_TBL(
 	herd_id		VARCHAR(30),
 	chaps_id	BIGINT NOT NULL AUTO_INCREMENT,
 	animal_id		varchar(20),
-	birth_date 	DATE,
+	birth_date 	DATE,G
 	breed		VARCHAR(16),
 	reg_no		VARCHAR(30),
 	reg_name	VARCHAR(30),
@@ -142,9 +142,9 @@ create table OWNERS_TBL(
 	active_flag 	ENUM('A','C','P'),
 	animal_source ENUM('S','P'),	
 	PRIMARY KEY (chaps_id,start_date),
-	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id)ON UPDATE CASCADE ON DELETE CASCADE,
-	FOREIGN KEY (producer_id) REFERENCES HERD_ASSO_TBL (producer_id)ON UPDATE CASCADE ON DELETE CASCADE,
-	FOREIGN KEY (herd_id) REFERENCES HERD_ASSO_TBL (herd_id) ON UPDATE CASCADE ON DELETE CASCADE
+	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id)ON  DELETE CASCADE,
+	FOREIGN KEY (producer_id) REFERENCES HERD_ASSO_TBL (producer_id)ON  DELETE CASCADE,
+	FOREIGN KEY (herd_id) REFERENCES HERD_ASSO_TBL (herd_id) ON DELETE CASCADE
 );
 
 create table EPD_TBL(
@@ -183,7 +183,7 @@ create table CARCASS_TBL(
 	muscle_score	FLOAT,
 	carcass_notes	TEXT,
 	PRIMARY KEY (chaps_id),
-	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id)
+	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id)ON DELETE CASCADE
 );
 
 create table MEASUREMENT_TBL(
@@ -193,12 +193,12 @@ create table MEASUREMENT_TBL(
 	weight		FLOAT,
 	hip_height	FLOAT,
 	frame_score	FLOAT,
-	status		VARCHAR(2),
+	status		VARCHAR(20),
 	entry_type	ENUM('W','BK','F','R','C'),
 	entry_subtype	ENUM('','R','I','F'),
 	lot_no 		varchar(16),
 	PRIMARY KEY (chaps_id,entry_date),
-	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id)
+	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id) ON DELETE CASCADE
 );
 
 create table WEANING_TBL(
@@ -206,11 +206,11 @@ create table WEANING_TBL(
 	Calf_ID		varchar(20),
 	entry_date	DATE NOT NULL,
 	manage_code	VARCHAR(2),
-	contemp_grp	VARCHAR(2),
+	contemp_grp	VARCHAR(20),
 	muscle_grade VARCHAR(2),
 	#lot_no		VARCHAR(2),
 	PRIMARY KEY (chaps_id,entry_date),
-	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id)
+	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id) ON DELETE CASCADE
 );
 
 create table BACKGROUND_TBL(
@@ -294,7 +294,7 @@ create table NOTES_TBL(
 	note_type	VARCHAR(2),
 	notes		TEXT,
 	PRIMARY KEY (chaps_id,entry_date),
-	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id) ON UPDATE CASCADE ON DELETE CASCADE
+	FOREIGN KEY (chaps_id) REFERENCES CATTLE_INFO_TBL (chaps_id) ON DELETE CASCADE
 );
 
 create table BULL_TURNOUT_TBL(
@@ -451,7 +451,8 @@ IGNORE 1 lines (chaps_id,Calf_ID,entry_date,@ignore,@ignore,@ignore,@ignore,@ign
 
 LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfrep_To_Replacement_Receiving_Stage.csv' 
 IGNORE INTO TABLE replacement_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
-IGNORE 1 lines (chaps_id,Calf_ID,entry_date,@ignore,@ignore,@ignore,back_fat,rib_eye,marbling,scrotum_circum,scrotum_date,pelvic_area,pelvic_date,@ignore,@ignore,365_day_weight,stage);
+IGNORE 1 lines (chaps_id,Calf_ID,entry_date,@ignore,@ignore,@ignore,back_fat,rib_eye,marbling,scrotum_circum,scrotum_date,pelvic_area,pelvic_date,@ignore,@ignore,365_day_weight,stage)
+set scrotum_date= IF(scrotum_date='0000-00-00','0000-01-01',scrotum_date), pelvic_date= IF(pelvic_date='0000-00-00','0000-01-01',pelvic_date);
 
 LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfrep_To_Replacement_Interim_Stage.csv' 
 IGNORE INTO TABLE replacement_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
@@ -463,33 +464,49 @@ IGNORE 1 lines (chaps_id,Calf_ID,entry_date,@ignore,@ignore,@ignore,back_fat,rib
 
 #------------------Loading data in measurement_tbl---------------------------#
 
-LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\CalfWean_To_Weaning.csv' 
+LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfwean_To_Measurement.csv' 
 IGNORE INTO TABLE measurement_tbl FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
-IGNORE 1 lines(chaps_id,Calf_ID,entry_date,@ignore,@ignore,@ignore,weight,hip_height,frame_score,`status`,@ignore,lot_no) set entry_type='w';
+IGNORE 1 lines(chaps_id,Calf_ID,entry_date ,@ignore,@ignore,@ignore,weight,hip_height,frame_score,`status`,@ignore,@ignore) 
+set entry_type='w' ,entry_date= IF(entry_date='0000-00-00','0000-01-01',entry_date);
 
 LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfback_To_Background_Receiving_Stage.csv' 
 IGNORE INTO TABLE measurement_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'  LINES TERMINATED BY '\r\n'
-IGNORE 1 lines (chaps_id,Calf_ID,entry_date,weight,hip_height,frame_score,`status`,@ignore,@ignore,entry_subtype)  set entry_type='bk';
+IGNORE 1 lines (chaps_id,Calf_ID,entry_date,weight,hip_height,frame_score,`status`,@ignore,@ignore,entry_subtype) 
+set entry_type='bk',entry_date= IF(entry_date='0000-00-00','0000-01-01',entry_date);
+
+
 
 LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfback_To_Background_Interim_Stage.csv' 
 IGNORE INTO TABLE measurement_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
-IGNORE 1 lines (chaps_id,Calf_ID,entry_date,weight,hip_height,frame_score,`status`,@ignore,@ignore,entry_subtype) set entry_type='bk';
+IGNORE 1 lines (chaps_id,Calf_ID,entry_date,weight,hip_height,frame_score,`status`,@ignore,@ignore,entry_subtype) 
+set entry_type='bk',entry_date= IF(entry_date='0000-00-00','0000-01-01',entry_date);
+
 
 LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfback_To_Background_Final_Stage.csv' 
 IGNORE INTO TABLE measurement_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
-IGNORE 1 lines (chaps_id,Calf_ID,entry_date,weight,hip_height,frame_score,`status`,@ignore,@ignore,entry_subtype) set entry_type='bk';
+IGNORE 1 lines (chaps_id,Calf_ID,entry_date,weight,hip_height,frame_score,`status`,@ignore,@ignore,entry_subtype) 
+set entry_type='bk',entry_date= IF(entry_date='0000-00-00','0000-01-01',entry_date);
+
+
 
 LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfrep_To_Replacement_Receiving_Stage.csv' 
 IGNORE INTO TABLE measurement_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
-IGNORE 1 lines (chaps_id,Calf_ID,entry_date,weight,hip_height,frame_score,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,`status`,@ignore,@ignore,entry_subtype) set entry_type='r';
+IGNORE 1 lines (chaps_id,Calf_ID,entry_date,weight,hip_height,frame_score,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,@ignore,`status`,@ignore,@ignore,entry_subtype) 
+set entry_type='r',entry_date= IF(entry_date='0000-00-00','0000-01-01',entry_date);
+
+
 
 LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfrep_To_Replacement_Interim_Stage.csv' 
 IGNORE INTO TABLE measurement_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
-IGNORE 1 lines (chaps_id,Calf_ID,entry_date,weight,hip_height,frame_score,@ignore,@ignore,@ignore,entry_subtype) set entry_type='r';
+IGNORE 1 lines (chaps_id,Calf_ID,entry_date,weight,hip_height,frame_score,@ignore,@ignore,@ignore,entry_subtype) 
+set entry_type='r',,entry_date= IF(entry_date='0000-00-00','0000-01-01',entry_date);
+
 
 LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\Calfrep_To_Replacement_Final_Stage.csv' 
 IGNORE INTO TABLE measurement_tbl  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
-IGNORE 1 lines (chaps_id,Calf_ID,entry_date,weight,hip_height,frame_score,@ignore,@ignore,@ignore,entry_subtype) set entry_type='r';
+IGNORE 1 lines (chaps_id,Calf_ID,entry_date,weight,hip_height,frame_score,@ignore,@ignore,@ignore,entry_subtype) 
+set entry_type='r',entry_date= IF(entry_date='0000-00-00','0000-01-01',entry_date);
+
 
 #---------------------------Loading data to notes_tbl-----------------------------------#
 LOAD DATA INFILE 'C:\\Users\\ddawar\\Documents\\CHAPS\\Imports\\New_Imports\\CalfWean_To_Weaning.csv' 
